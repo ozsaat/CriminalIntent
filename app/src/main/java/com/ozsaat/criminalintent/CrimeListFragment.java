@@ -50,10 +50,12 @@ public class CrimeListFragment extends Fragment {
             titleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
             solvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
+
         }
 
         public void bindCrime(Crime crimeCommited) {
             crime = crimeCommited;
+
 
             titleTextView.setText(crime.getTitle());
             dateTextView.setText(crime.getDate().toString());
