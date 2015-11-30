@@ -1,5 +1,6 @@
 package com.ozsaat.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class CrimeListFragment extends Fragment {
         crimeRecyclerView.setAdapter(adapter);
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder{
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private Crime crime;
         private TextView titleTextView;
@@ -46,6 +48,8 @@ public class CrimeListFragment extends Fragment {
 
         public CrimeHolder(View itemView) {
             super(itemView);
+
+            itemView.setOnClickListener( this );
 
             titleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
@@ -60,6 +64,14 @@ public class CrimeListFragment extends Fragment {
             titleTextView.setText(crime.getTitle());
             dateTextView.setText(crime.getDate().toString());
             solvedCheckBox.setChecked(crime.isSolved());
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent( getActivity(), CrimeActivity.class );
+            startActivity( intent );
 
         }
     }
