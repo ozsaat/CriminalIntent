@@ -1,5 +1,7 @@
 package com.ozsaat.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,12 +16,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+
+    private static final int REQUEST_DATE = 0;
 
     private Crime crime;
     private EditText titleField;
@@ -28,7 +33,7 @@ public class CrimeFragment extends Fragment {
 
     public static CrimeFragment newInstance(UUID crimeID) {
         Bundle args = new Bundle(  );
-        args.putSerializable( ARG_CRIME_ID, crimeID );
+        args.putSerializable(ARG_CRIME_ID, crimeID);
 
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments( args );
@@ -68,19 +73,20 @@ public class CrimeFragment extends Fragment {
         });
 
         dateButton = (Button)view.findViewById(R.id.crime_date);
-        dateButton.setText(DateFormat.format("EEEE, dd MMM, yyyy", crime.getDate()).toString());
+        updateDate();
 //        dateButton.setText(crime.getDate().toString());
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     FragmentManager manager = getFragmentManager();
                     DatePickerFragment dialog = DatePickerFragment.newInstance(crime.getDate());
+                    dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                     dialog.show(manager, DIALOG_DATE);
                 }
         });
 
         solvedCheckBox = (CheckBox)view.findViewById(R.id.crime_solved);
-        solvedCheckBox.setChecked( crime.isSolved() );
+        solvedCheckBox.setChecked(crime.isSolved());
         solvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -90,5 +96,22 @@ public class CrimeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            crime.setDate(date);
+            updateDate();
+        }
+
+    }
+
+    private void updateDate() {
+        dateButton.setText(crime.getDate().toString());
     }
 }
