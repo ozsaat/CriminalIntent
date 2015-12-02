@@ -3,6 +3,7 @@ package com.ozsaat.criminalintent;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -25,11 +26,14 @@ public class CrimeFragment extends Fragment {
     private static final String DIALOG_DATE = "DialogDate";
 
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_CONTACT = 1;
 
     private Crime crime;
     private EditText titleField;
     private Button dateButton;
     private CheckBox solvedCheckBox;
+    private Button reportButton;
+    private Button suspectButton;
 
     public static CrimeFragment newInstance(UUID crimeID) {
         Bundle args = new Bundle(  );
@@ -101,6 +105,32 @@ public class CrimeFragment extends Fragment {
                 crime.setSolved(isChecked);
             }
         });
+
+        reportButton = (Button)view.findViewById(R.id.crime_report);
+        reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                intent = Intent.createChooser(intent, getString(R.string.send_report));
+                startActivity(intent);
+            }
+        });
+
+        final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        suspectButton = (Button)view.findViewById(R.id.crime_suspect);
+        suspectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(pickContact, REQUEST_CONTACT);
+            }
+        });
+
+        if (crime.getSuspect() != null) {
+            suspectButton.setText(crime.getSuspect());
+        }
 
         return view;
     }
