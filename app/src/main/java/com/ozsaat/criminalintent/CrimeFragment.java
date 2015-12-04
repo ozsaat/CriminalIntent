@@ -2,6 +2,7 @@ package com.ozsaat.criminalintent;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -132,6 +133,11 @@ public class CrimeFragment extends Fragment {
 
         if (crime.getSuspect() != null) {
             suspectButton.setText(crime.getSuspect());
+        }
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            suspectButton.setEnabled(false);
         }
 
         return view;
